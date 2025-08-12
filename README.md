@@ -1,0 +1,1 @@
+# trendbreak-scanner
