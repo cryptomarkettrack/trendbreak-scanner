@@ -68,6 +68,7 @@ const ActivityFeed = ({
       const results = await Promise.allSettled(breakoutPromises);
       const newBreakouts = results
         ?.filter(result => result?.status === 'fulfilled' && result?.value)
+        ?.sort((c1, c2) => c2.value.change.localeCompare(c1.value.change))
         ?.map(result => result?.value);
 
       if (newBreakouts?.length > 0) {

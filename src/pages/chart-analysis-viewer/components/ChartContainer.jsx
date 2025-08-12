@@ -429,19 +429,28 @@ const ChartContainer = ({
       cleanup();
     };
   }, [selectedPair, timeframe, showFractals, showTrendlines, trendlineColor]);
+const handleExportChart = () => {
+  try {
+    if (chartRef?.current) {
+      // Take screenshot from lightweight-charts
+      const screenshot = chartRef.current.takeScreenshot(); // Returns HTMLCanvasElement
+      
+      // Convert to PNG Base64
+      const dataUrl = screenshot.toDataURL("image/png");
 
-  const handleExportChart = () => {
-    try {
-      if (chartRef?.current) {
-        const link = document.createElement('a');
-        link.download = `${selectedPair?.replace('/', '-')}-${timeframe}-${Date.now()}.png`;
-        link.href = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==';
-        link?.click();
-      }
-    } catch (error) {
-      console.error('Error exporting chart:', error);
+      // Create download link
+      const link = document.createElement('a');
+      link.download = `${selectedPair?.replace('/', '-')}-${timeframe}-${Date.now()}.png`;
+      link.href = dataUrl;
+      link.click();
+    } else {
+      console.warn("Chart reference is missing.");
     }
-  };
+  } catch (error) {
+    console.error('Error exporting chart:', error);
+  }
+};
+
 
   const handleRetry = () => {
     resetError();

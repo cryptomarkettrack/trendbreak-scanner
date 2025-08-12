@@ -92,10 +92,7 @@ const GlobalHeader = ({
           <div className="hidden md:flex items-center space-x-2 px-3 py-2 bg-card rounded-lg border border-border">
             <Icon name="Clock" size={16} color="var(--color-text-secondary)" />
             <span className="text-sm font-data text-text-secondary">
-              {new Date()?.toLocaleTimeString('en-US', { 
-                hour12: false,
-                timeZone: 'UTC'
-              })} UTC
+              {new Date()?.toLocaleTimeString('en-US')}
             </span>
           </div>
 
