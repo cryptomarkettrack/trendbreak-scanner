@@ -69,8 +69,13 @@ const ActivityFeed = ({
       const newBreakouts = results
         ?.filter(result => result?.status === 'fulfilled' && result?.value)
         ?.sort((a, b) => {
-          const aChange = parseFloat(a.value.change.replace('%', ''));
-          const bChange = parseFloat(b.value.change.replace('%', ''));
+          // If you want to sort by change percentage, you can do it like this:
+          // const aChange = parseFloat(a.value.change.replace('%', ''));
+          // const bChange = parseFloat(b.value.change.replace('%', ''));
+
+          // Sort by volume
+          const aChange = a.value.volume;
+          const bChange = b.value.volume;
 
           // Positive first (largest to smallest), then zeros, then negatives
           if (aChange > 0 && bChange > 0) return bChange - aChange; // sort positives desc
