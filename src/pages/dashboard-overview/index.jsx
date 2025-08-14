@@ -11,7 +11,7 @@ const DashboardOverview = () => {
   const [activeTab, setActiveTab] = useState('scanner');
   const [scanningSettings, setScanningSettings] = useState({
     exchange: 'binance',
-    timeframe: '15m',
+    timeframe: '1h',
     fractalPeriod: 5,
     maxPairs: 50
   });

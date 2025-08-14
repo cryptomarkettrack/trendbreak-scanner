@@ -11,7 +11,7 @@ const ScanningControls = ({
   className = '' 
 }) => {
   const [selectedExchange, setSelectedExchange] = useState('binance');
-  const [selectedTimeframe, setSelectedTimeframe] = useState('15m');
+  const [selectedTimeframe, setSelectedTimeframe] = useState('1h');
   const [fractalPeriod, setFractalPeriod] = useState('5');
   const [maxPairs, setMaxPairs] = useState('50');
 

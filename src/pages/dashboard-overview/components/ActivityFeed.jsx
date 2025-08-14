@@ -68,7 +68,21 @@ const ActivityFeed = ({
       const results = await Promise.allSettled(breakoutPromises);
       const newBreakouts = results
         ?.filter(result => result?.status === 'fulfilled' && result?.value)
-        ?.sort((c1, c2) => c2.value.change.localeCompare(c1.value.change))
+        ?.sort((a, b) => {
+          const aChange = parseFloat(a.value.change.replace('%', ''));
+          const bChange = parseFloat(b.value.change.replace('%', ''));
+
+          // Positive first (largest to smallest), then zeros, then negatives
+          if (aChange > 0 && bChange > 0) return bChange - aChange; // sort positives desc
+          if (aChange > 0) return -1; // a positive before anything else
+          if (bChange > 0) return 1;  // b positive before anything else
+
+          if (aChange === 0 && bChange === 0) return 0; // both zero
+          if (aChange === 0) return -1; // zero before negatives
+          if (bChange === 0) return 1;  // zero before negatives
+
+          return bChange - aChange; // negatives sorted desc (less negative first)
+        })
         ?.map(result => result?.value);
 
       if (newBreakouts?.length > 0) {
