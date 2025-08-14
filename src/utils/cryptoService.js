@@ -430,65 +430,79 @@ detectTrendlines(ohlcv, n = 10) {
 }
 
 
-  // Generate fractals from OHLCV data
-  generateFractals(ohlcvData, period = 5) {
-    try {
-      if (!ohlcvData || ohlcvData?.length === 0) return [];
-      
-      const fractals = [];
-      
-      for (let i = period; i < ohlcvData?.length - period; i++) {
-        const current = ohlcvData?.[i];
-        if (!current) continue;
-        
-        let isHighFractal = true;
-        let isLowFractal = true;
-        
-        // Check if current point is a fractal high
-        for (let j = i - period; j <= i + period; j++) {
-          if (j !== i && ohlcvData?.[j]?.high >= current?.high) {
-            isHighFractal = false;
-            break;
-          }
-        }
-        
-        // Check if current point is a fractal low
-        for (let j = i - period; j <= i + period; j++) {
-          if (j !== i && ohlcvData?.[j]?.low <= current?.low) {
-            isLowFractal = false;
-            break;
-          }
-        }
-        
-        if (isHighFractal) {
-          fractals?.push({
-            time: current?.time,
-            position: 'aboveBar',
-            color: '#F59E0B',
-            shape: 'circle',
-            text: 'HH',
-            size: 1,
-          });
-        }
-        
-        if (isLowFractal) {
-          fractals?.push({
-            time: current?.time,
-            position: 'belowBar',
-            color: '#8B5CF6',
-            shape: 'circle',
-            text: 'LL',
-            size: 1,
-          });
+generateFractals(ohlcvData, period = 5) {
+  try {
+    if (!ohlcvData || ohlcvData.length === 0) return [];
+
+    const fractals = [];
+    let lastSwingHigh = null;
+    let lastSwingLow = null;
+
+    for (let i = period; i < ohlcvData.length - period; i++) {
+      const current = ohlcvData[i];
+      if (!current) continue;
+
+      let isHighFractal = true;
+      let isLowFractal = true;
+
+      // High fractal check
+      for (let j = i - period; j <= i + period; j++) {
+        if (j !== i && ohlcvData[j]?.high >= current.high) {
+          isHighFractal = false;
+          break;
         }
       }
-      
-      return fractals;
-    } catch (error) {
-      console.error('Error generating fractals:', error);
-      return [];
+
+      // Low fractal check
+      for (let j = i - period; j <= i + period; j++) {
+        if (j !== i && ohlcvData[j]?.low <= current.low) {
+          isLowFractal = false;
+          break;
+        }
+      }
+
+      if (isHighFractal) {
+        let label = 'HH';
+        if (lastSwingHigh !== null) {
+          label = current.high > lastSwingHigh ? 'HH' : 'LH';
+        }
+        lastSwingHigh = current.high;
+
+        fractals.push({
+          time: current.time,
+          position: 'aboveBar',
+          color: label === 'HH' ? '#F59E0B' : '#E11D48',
+          shape: 'circle',
+          text: label,
+          size: 1,
+        });
+      }
+
+      if (isLowFractal) {
+        let label = 'LL';
+        if (lastSwingLow !== null) {
+          label = current.low > lastSwingLow ? 'HL' : 'LL';
+        }
+        lastSwingLow = current.low;
+
+        fractals.push({
+          time: current.time,
+          position: 'belowBar',
+          color: label === 'LL' ? '#8B5CF6' : '#10B981',
+          shape: 'circle',
+          text: label,
+          size: 1,
+        });
+      }
     }
+
+    return fractals;
+  } catch (error) {
+    console.error('Error generating fractals:', error);
+    return [];
   }
+}
+
 
   // Check exchange connection status
   async checkConnection(exchangeName = this.defaultExchange) {

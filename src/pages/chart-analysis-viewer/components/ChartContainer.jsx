@@ -7,7 +7,7 @@ import cryptoService from '../../../utils/cryptoService';
 const CHART_CONFIG = {
   height: 500,
   minHeight: 400,
-  updateInterval: 10000, // 10 seconds
+  updateInterval: 5000, // 5 seconds
   dataPoints: 200,
   basePrices: {
     BTC: 45000,
@@ -53,10 +53,10 @@ const useChartData = (selectedPair, timeframe) => {
 
       data.push({
         time,
-        open: parseFloat(open?.toFixed(8)),
-        high: parseFloat(high?.toFixed(8)),
-        low: parseFloat(low?.toFixed(8)),
-        close: parseFloat(close?.toFixed(8))
+        open,   // no rounding
+        high,   // no rounding
+        low,    // no rounding
+        close   // no rounding
       });
     }
     return data;
@@ -154,6 +154,11 @@ const useChart = (containerRef, selectedPair, timeframe, showFractals, showTrend
       borderUpColor: '#10B981',
       wickDownColor: '#EF4444',
       wickUpColor: '#10B981',
+      priceFormat: {
+        type: 'price',
+        precision: 4,   // Number of digits after decimal
+        minMove: 0.0001, // Smallest price step
+      },
     });
   };
 
@@ -419,7 +424,13 @@ const ChartContainer = ({
       }
     };
 
-    setupChart();
+    //initial fetch
+    setupChart()
+
+    //scheduled fetch
+    const interval = setInterval(() => {
+        setupChart()
+    }, 5000);
 
     // Handle resize
     window.addEventListener('resize', handleResize);
@@ -427,29 +438,31 @@ const ChartContainer = ({
     return () => {
       window.removeEventListener('resize', handleResize);
       cleanup();
+      clearInterval(interval);
     };
   }, [selectedPair, timeframe, showFractals, showTrendlines, trendlineColor]);
-const handleExportChart = () => {
-  try {
-    if (chartRef?.current) {
-      // Take screenshot from lightweight-charts
-      const screenshot = chartRef.current.takeScreenshot(); // Returns HTMLCanvasElement
-      
-      // Convert to PNG Base64
-      const dataUrl = screenshot.toDataURL("image/png");
 
-      // Create download link
-      const link = document.createElement('a');
-      link.download = `${selectedPair?.replace('/', '-')}-${timeframe}-${Date.now()}.png`;
-      link.href = dataUrl;
-      link.click();
-    } else {
-      console.warn("Chart reference is missing.");
+  const handleExportChart = () => {
+    try {
+      if (chartRef?.current) {
+        // Take screenshot from lightweight-charts
+        const screenshot = chartRef.current.takeScreenshot(); // Returns HTMLCanvasElement
+        
+        // Convert to PNG Base64
+        const dataUrl = screenshot.toDataURL("image/png");
+
+        // Create download link
+        const link = document.createElement('a');
+        link.download = `${selectedPair?.replace('/', '-')}-${timeframe}-${Date.now()}.png`;
+        link.href = dataUrl;
+        link.click();
+      } else {
+        console.warn("Chart reference is missing.");
+      }
+    } catch (error) {
+      console.error('Error exporting chart:', error);
     }
-  } catch (error) {
-    console.error('Error exporting chart:', error);
-  }
-};
+  };
 
 
   const handleRetry = () => {
