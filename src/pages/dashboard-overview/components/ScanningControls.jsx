@@ -26,7 +26,8 @@ const ScanningControls = ({
     { value: '5m', label: '5 Minutes', description: 'Short-term scalping' },
     { value: '15m', label: '15 Minutes', description: 'Recommended' },
     { value: '1h', label: '1 Hour', description: 'Medium-term' },
-    { value: '4h', label: '4 Hours', description: 'Swing trading' }
+    { value: '4h', label: '4 Hours', description: 'Swing trading' },
+    { value: '1d', label: '1 Day', description: 'Long-term position analysis' }
   ];
 
   const handleToggleScanning = () => {
