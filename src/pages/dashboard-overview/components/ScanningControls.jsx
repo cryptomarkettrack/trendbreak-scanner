@@ -26,6 +26,7 @@ const ScanningControls = ({
     { value: '1m', label: '1 Minute', description: 'Ultra short-term' },
     { value: '5m', label: '5 Minutes', description: 'Short-term scalping' },
     { value: '15m', label: '15 Minutes', description: 'Recommended' },
+    { value: '30m', label: '30 Minutes', description: 'While you chillin' },
     { value: '1h', label: '1 Hour', description: 'Medium-term' },
     { value: '4h', label: '4 Hours', description: 'Swing trading' },
     { value: '1d', label: '1 Day', description: 'Long-term position analysis' },
