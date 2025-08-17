@@ -5,6 +5,7 @@ import cryptoService from '../../../utils/cryptoService';
 
 const SystemMetrics = ({ 
   isScanning = false,
+  exchange = 'binance',
   className = '' 
 }) => {
   const [metrics, setMetrics] = useState({
@@ -31,15 +32,15 @@ const SystemMetrics = ({
 
       try {
         setConnectionStatus('connecting');
-        const connection = await cryptoService?.checkConnection();
+        const connection = await cryptoService?.checkConnection(exchange);
         
         if (connection?.status === 'connected') {
           setConnectionStatus('connected');
           
           // Get real exchange info
           try {
-            const markets = await cryptoService?.getMarkets();
-            const usdtPairs = await cryptoService?.getUSDTPairs();
+            const markets = await cryptoService?.getMarkets(exchange);
+            const usdtPairs = await cryptoService?.getUSDTPairs(exchange);
             
             setExchangeInfo({
               totalMarkets: Object.keys(markets)?.length,
@@ -68,7 +69,7 @@ const SystemMetrics = ({
     const interval = setInterval(checkConnection, 30000); // Check every 30 seconds
 
     return () => clearInterval(interval);
-  }, [isScanning]);
+  }, [isScanning, exchange]);
 
   // Real-time metrics updates
   useEffect(() => {
@@ -90,7 +91,7 @@ const SystemMetrics = ({
     return () => {
       if (interval) clearInterval(interval);
     };
-  }, [isScanning, connectionStatus, sessionStartTime, exchangeInfo]);
+  }, [isScanning, connectionStatus, sessionStartTime, exchangeInfo, exchange]);
 
   // Initialize metrics
   useEffect(() => {

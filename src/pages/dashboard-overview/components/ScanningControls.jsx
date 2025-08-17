@@ -18,6 +18,7 @@ const ScanningControls = ({
   const exchangeOptions = [
     { value: 'binance', label: 'Binance', description: 'Most liquid pairs' },
     { value: 'kraken', label: 'Kraken', description: 'European focus' },
+    { value: 'bybit', label: 'Bybit', description: 'High leverage & derivatives' },
     { value: 'kucoin', label: 'KuCoin', description: 'Wide selection' }
   ];
 
@@ -27,7 +28,8 @@ const ScanningControls = ({
     { value: '15m', label: '15 Minutes', description: 'Recommended' },
     { value: '1h', label: '1 Hour', description: 'Medium-term' },
     { value: '4h', label: '4 Hours', description: 'Swing trading' },
-    { value: '1d', label: '1 Day', description: 'Long-term position analysis' }
+    { value: '1d', label: '1 Day', description: 'Long-term position analysis' },
+    { value: '1w', label: '1 Week', description: 'Historical trend analysis' }
   ];
 
   const handleToggleScanning = () => {

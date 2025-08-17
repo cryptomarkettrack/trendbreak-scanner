@@ -10,6 +10,7 @@ const ChartAnalysisViewer = () => {
   // Chart state
   const [selectedPair, setSelectedPair] = useState('BTC/USDT');
   const [timeframe, setTimeframe] = useState('1h');
+  const [exchange, setExchange] = useState('binance');
   const [showFractals, setShowFractals] = useState(true);
   const [showTrendlines, setShowTrendlines] = useState(true);
   const [trendlineColor, setTrendlineColor] = useState('#00D4AA');
@@ -29,18 +30,16 @@ const ChartAnalysisViewer = () => {
   const [activeTab, setActiveTab] = useState('analysis');
 
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const pairParam = params.get("pair"); // e.g., "RED/USDT"
-    const timeframeParam = params.get("timeframe"); // e.g., "15m"
+  const params = new URLSearchParams(window.location.search);
+  const pairParam = params.get("pair");
+  const timeframeParam = params.get("timeframe");
+  const exchangeParam = params.get("exchange");
 
-    if (pairParam) {
-      setSelectedPair(pairParam);
-    }
+  if (pairParam) setSelectedPair(pairParam);
+  if (timeframeParam) setTimeframe(timeframeParam);
+  if (exchangeParam) setExchange(exchangeParam);
+}, []);
 
-    if (timeframeParam) {
-      setTimeframe(timeframeParam);
-    }
-  }, [])
 
   // Handlers
   const handleBreakoutDetected = useCallback((breakout) => {
@@ -110,6 +109,8 @@ const ChartAnalysisViewer = () => {
               onPairChange={setSelectedPair}
               timeframe={timeframe}
               onTimeframeChange={setTimeframe}
+              exchange={exchange}
+              onExchangeChange={setExchange}
               showFractals={showFractals}
               onFractalsToggle={setShowFractals}
               showTrendlines={showTrendlines}
@@ -153,6 +154,7 @@ const ChartAnalysisViewer = () => {
               <ChartContainer
                 selectedPair={selectedPair}
                 timeframe={timeframe}
+                exchange={exchange}
                 showFractals={showFractals}
                 showTrendlines={showTrendlines}
                 trendlineColor={trendlineColor}

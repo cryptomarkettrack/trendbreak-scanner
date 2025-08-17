@@ -25,7 +25,7 @@ const CHART_CONFIG = {
 };
 
 // Custom hook for chart data management
-const useChartData = (selectedPair, timeframe) => {
+const useChartData = (selectedPair, timeframe, exchange) => {
   const [isLoading, setIsLoading] = useState(true);
   const [chartError, setChartError] = useState(null);
   const [realTimeData, setRealTimeData] = useState([]);
@@ -67,7 +67,7 @@ const useChartData = (selectedPair, timeframe) => {
       setIsLoading(true);
       setChartError(null);
       
-      const ohlcvData = await cryptoService?.getOHLCV(symbol, tf, CHART_CONFIG.dataPoints);
+      const ohlcvData = await cryptoService?.getOHLCV(symbol, tf, CHART_CONFIG.dataPoints, exchange);
 
       if (ohlcvData?.length > 0) {
         setRealTimeData(ohlcvData);
@@ -290,15 +290,15 @@ const useChart = (containerRef, selectedPair, timeframe, showFractals, showTrend
 };
 
 // Custom hook for real-time updates
-const useRealTimeUpdates = (candlestickSeriesRef, connectionStatus, selectedPair, timeframe, onBreakoutDetected) => {
+const useRealTimeUpdates = (candlestickSeriesRef, connectionStatus, selectedPair, timeframe, exchange, onBreakoutDetected) => {
   useEffect(() => {
     const interval = setInterval(async () => {
       try {
         if (candlestickSeriesRef?.current && connectionStatus === 'connected') {
-          const currentPrice = await cryptoService?.getCurrentPrice(selectedPair);
+          const currentPrice = await cryptoService?.getCurrentPrice(selectedPair, exchange);
           
           if (currentPrice?.price) {
-            const breakout = await cryptoService?.analyzeBreakout(selectedPair, timeframe);
+            const breakout = await cryptoService?.analyzeBreakout(selectedPair, timeframe, exchange);
             if (breakout) {
               onBreakoutDetected({
                 pair: breakout?.symbol,
@@ -316,7 +316,7 @@ const useRealTimeUpdates = (candlestickSeriesRef, connectionStatus, selectedPair
     }, CHART_CONFIG.updateInterval);
 
     return () => clearInterval(interval);
-  }, [selectedPair, timeframe, onBreakoutDetected, connectionStatus, candlestickSeriesRef]);
+  }, [selectedPair, timeframe, exchange, onBreakoutDetected, connectionStatus, candlestickSeriesRef]);
 };
 
 // Connection status configuration
@@ -367,7 +367,7 @@ const ChartHeader = ({ selectedPair, timeframe, lastUpdate, connectionStatus, on
 };
 
 // Chart Footer Component
-const ChartFooter = ({ showFractals, showTrendlines, connectionStatus }) => (
+const ChartFooter = ({ showFractals, showTrendlines, connectionStatus, exchange }) => (
   <div className="flex items-center justify-between p-3 bg-muted/50 text-xs text-text-secondary">
     <div className="flex items-center space-x-4">
       <span>Fractals: {showFractals ? 'ON' : 'OFF'}</span>
@@ -376,7 +376,7 @@ const ChartFooter = ({ showFractals, showTrendlines, connectionStatus }) => (
     </div>
     <div className="flex items-center space-x-2">
       <Icon name="Info" size={12} />
-      <span>Drag to pan • Scroll to zoom • Live data via {connectionStatus === 'connected' ? 'Binance' : 'Exchange API'}</span>
+      <span>Drag to pan • Scroll to zoom • Live data via {connectionStatus === 'connected' ? exchange : 'Exchange API'}</span>
     </div>
   </div>
 );
@@ -385,6 +385,7 @@ const ChartFooter = ({ showFractals, showTrendlines, connectionStatus }) => (
 const ChartContainer = ({ 
   selectedPair = 'BTC/USDT',
   timeframe = '1h',
+  exchange = 'binance',
   showFractals = true,
   showTrendlines = true,
   trendlineColor = '#00D4AA',
@@ -400,7 +401,7 @@ const ChartContainer = ({
     connectionStatus,
     fetchRealData,
     resetError
-  } = useChartData(selectedPair, timeframe);
+  } = useChartData(selectedPair, timeframe, exchange);
 
   const {
     chartRef,
@@ -411,7 +412,7 @@ const ChartContainer = ({
     handleResize
   } = useChart(chartContainerRef, selectedPair, timeframe, showFractals, showTrendlines, trendlineColor);
 
-  useRealTimeUpdates(candlestickSeriesRef, connectionStatus, selectedPair, timeframe, onBreakoutDetected);
+  useRealTimeUpdates(candlestickSeriesRef, connectionStatus, selectedPair, timeframe, exchange, onBreakoutDetected);
 
   // Initialize chart
   useEffect(() => {
@@ -440,7 +441,7 @@ const ChartContainer = ({
       cleanup();
       clearInterval(interval);
     };
-  }, [selectedPair, timeframe, showFractals, showTrendlines, trendlineColor]);
+  }, [selectedPair, timeframe, exchange, showFractals, showTrendlines, trendlineColor]);
 
   const handleExportChart = () => {
     try {
@@ -522,6 +523,7 @@ const ChartContainer = ({
         showFractals={showFractals}
         showTrendlines={showTrendlines}
         connectionStatus={connectionStatus}
+        exchange={exchange}
       />
     </div>
   );
