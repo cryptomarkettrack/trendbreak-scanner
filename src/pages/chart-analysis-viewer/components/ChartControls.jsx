@@ -16,27 +16,20 @@ const ChartControls = ({
   trendlineColor = '#00D4AA',
   onTrendlineColorChange = () => {},
   onResetChart = () => {},
+  exchange = 'binance',
+  onExchangeChange = () => {},
   className = ''
 }) => {
   const [tradingPairs, setTradingPairs] = useState([]);
-  useEffect(async () => {
-    setTradingPairs(await getTradingPairs());
-  }, []);
-  // const tradingPairs = [
-  //   { value: 'BTC/USDT', label: 'BTC/USDT', description: 'Bitcoin vs Tether' },
-  //   { value: 'ETH/USDT', label: 'ETH/USDT', description: 'Ethereum vs Tether' },
-  //   { value: 'ADA/USDT', label: 'ADA/USDT', description: 'Cardano vs Tether' },
-  //   { value: 'DOT/USDT', label: 'DOT/USDT', description: 'Polkadot vs Tether' },
-  //   { value: 'LINK/USDT', label: 'LINK/USDT', description: 'Chainlink vs Tether' },
-  //   { value: 'UNI/USDT', label: 'UNI/USDT', description: 'Uniswap vs Tether' },
-  //   { value: 'MATIC/USDT', label: 'MATIC/USDT', description: 'Polygon vs Tether' },
-  //   { value: 'AVAX/USDT', label: 'AVAX/USDT', description: 'Avalanche vs Tether' },
-  //   { value: 'SOL/USDT', label: 'SOL/USDT', description: 'Solana vs Tether' },
-  //   { value: 'ATOM/USDT', label: 'ATOM/USDT', description: 'Cosmos vs Tether' }
-  // ];
+
+  useEffect(() => {
+    (async () => {
+      setTradingPairs(await getTradingPairs());
+    })();
+  }, [exchange]);
 
   const getTradingPairs = async () => {
-    var usdtPairs = await cryptoService.getUSDTPairs('binance', 1000);
+    var usdtPairs = await cryptoService.getUSDTPairs(exchange, 1000);
     return usdtPairs?.map(pair => {
       return {value: pair, label: pair}
     }) ?? [];
@@ -65,6 +58,21 @@ const ChartControls = ({
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0 lg:space-x-6">
         {/* Primary Controls */}
         <div className="flex flex-col sm:flex-row sm:items-center space-y-3 sm:space-y-0 sm:space-x-4">
+          <div className="min-w-[150px]">
+            <Select
+              label="Exchange"
+              options={[
+                { value: 'binance', label: 'Binance' },
+                { value: 'kraken', label: 'Kraken' },
+                { value: 'bybit', label: 'Bybit' },
+                { value: 'kucoin', label: 'KuCoin' }
+              ]}
+              value={exchange}
+              onChange={onExchangeChange}
+              className="text-sm"
+            />
+          </div>
+          
           <div className="min-w-[200px]">
             <Select
               label="Trading Pair"

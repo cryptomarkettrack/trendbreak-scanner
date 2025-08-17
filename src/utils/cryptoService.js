@@ -18,6 +18,16 @@ class CryptoService {
         enableRateLimit: true,
       });
 
+      // Initialize Bybit
+      this.exchanges.bybit = new ccxt.bybit({
+        enableRateLimit: true,
+      });
+
+      // Initialize KuCoin
+      this.exchanges.kucoin = new ccxt.kucoin({
+        enableRateLimit: true,
+      });
+
       console.log('CryptoService initialized with exchanges:', Object.keys(this.exchanges));
     } catch (error) {
       console.error('Error initializing exchanges:', error);

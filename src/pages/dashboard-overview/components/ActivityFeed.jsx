@@ -7,29 +7,23 @@ import cryptoService from '../../../utils/cryptoService';
 const ActivityFeed = ({ 
   isScanning = false,
   className = '',
-  timeframe = '1h'
+  timeframe = '1h',
+  exchange = 'binance'
 }) => {
   const [breakouts, setBreakouts] = useState([]);
   const [filter, setFilter] = useState('all');
   const [isLoading, setIsLoading] = useState(false);
   const [connectionStatus, setConnectionStatus] = useState('disconnected');
-
-  console.log('timeframe', timeframe);
-
-  // Popular USDT pairs to monitor
-  // const monitoredPairs = [
-  //   'BTC/USDT', 'ETH/USDT', 'BNB/USDT', 'ADA/USDT', 'SOL/USDT',
-  //   'MATIC/USDT', 'DOT/USDT', 'AVAX/USDT', 'LINK/USDT', 'UNI/USDT'
-  // ];
-
-
   const [monitoredPairs, setMonitoredPairs] = useState([]);
-  useEffect(async () => {
-    setMonitoredPairs(await getTradingPairs());
-  }, []);
+  useEffect(() => {
+    (async () => {
+      const pairs = await getTradingPairs();
+      setMonitoredPairs(pairs);
+    })();
+  }, [exchange]);
 
   const getTradingPairs = async () => {
-    var usdtPairs = await cryptoService.getUSDTPairs('binance', 1000);
+    var usdtPairs = await cryptoService.getUSDTPairs(exchange, 1000);
     return usdtPairs;
   };
 
@@ -43,7 +37,7 @@ const ActivityFeed = ({
       
       const breakoutPromises = monitoredPairs?.map(async (pair) => {
         try {
-          const breakout = await cryptoService?.analyzeBreakout(pair, timeframe);
+          const breakout = await cryptoService?.analyzeBreakout(pair, timeframe, exchange);
           if (breakout) {
             return {
               id: Date.now() + Math.random(),
@@ -342,7 +336,7 @@ const ActivityFeed = ({
                             variant="ghost" 
                             size="sm" 
                             iconName="ExternalLink"
-                            onClick={() => window.open(`/chart-analysis-viewer?pair=${breakout?.pair}&timeframe=${timeframe}`, '_blank')}
+                            onClick={() => window.open(`/chart-analysis-viewer?pair=${breakout?.pair}&timeframe=${timeframe}&exchange=${exchange}`, '_blank')}
                           >
                             View Chart
                           </Button>

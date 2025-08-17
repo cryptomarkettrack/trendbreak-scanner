@@ -92,21 +92,23 @@ const DashboardOverview = () => {
             </div>
 
             {/* Center Area - Activity Feed */}
-            <div className="lg:col-span-6">
+            <div className="lg:col-span-9">
               <ActivityFeed
                 isScanning={isScanning}
                 className="h-fit"
                 timeframe={scanningSettings?.timeframe}
+                exchange={scanningSettings?.exchange}
               />
             </div>
 
             {/* Right Panel - System Metrics */}
-            <div className="lg:col-span-3">
+            {/* <div className="lg:col-span-3">
               <SystemMetrics
                 isScanning={isScanning}
+                exchange={scanningSettings?.exchange}
                 className="sticky top-36"
               />
-            </div>
+            </div> */}
           </div>
 
           {/* Mobile Responsive Adjustments */}
