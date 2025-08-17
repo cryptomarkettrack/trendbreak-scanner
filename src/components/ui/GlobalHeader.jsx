@@ -74,19 +74,6 @@ const GlobalHeader = ({
 
         {/* Status & Controls Section */}
         <div className="flex items-center space-x-6">
-          {/* Connection Status */}
-          <div className="flex items-center space-x-2 px-3 py-2 bg-card rounded-lg border border-border">
-            <div className={`flex items-center space-x-2 ${statusConfig?.color}`}>
-              <Icon 
-                name={statusConfig?.icon} 
-                size={16} 
-                className={statusConfig?.pulse ? 'pulse-status' : ''}
-              />
-              <span className="text-sm font-medium hidden sm:inline">
-                {statusConfig?.label}
-              </span>
-            </div>
-          </div>
 
           {/* System Time */}
           <div className="hidden md:flex items-center space-x-2 px-3 py-2 bg-card rounded-lg border border-border">
