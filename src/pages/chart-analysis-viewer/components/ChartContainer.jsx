@@ -8,7 +8,7 @@ const CHART_CONFIG = {
   height: 500,
   minHeight: 400,
   updateInterval: 5000, // 5 seconds
-  dataPoints: 500,
+  dataPoints: 300,
   basePrices: {
     BTC: 45000,
     ETH: 2800,
@@ -279,24 +279,24 @@ const useChart = (containerRef, selectedPair, timeframe, showFractals, showTrend
         addTrendlines(chart, ohlcvData);
 
         // --- EMA Visualization ---
-        const emaConfigs = [
-          { period: 50, color: '#F59E42', title: 'EMA50' },
-          { period: 100, color: '#3B82F6', title: 'EMA100' },
-          { period: 200, color: '#A855F7', title: 'EMA200' }
-        ];
-        emaConfigs.forEach(cfg => {
-          const emaData = calculateEMA(ohlcvData, cfg.period);
-          if (emaData.length > 0) {
-            const emaSeries = chart.addLineSeries({
-              color: cfg.color,
-              lineWidth: 2,
-              title: cfg.title,
-              priceLineVisible: false,
-              lastValueVisible: false,
-            });
-            emaSeries.setData(emaData);
-          }
-        });
+        // const emaConfigs = [
+        //   { period: 50, color: '#F59E42', title: 'EMA50' },
+        //   { period: 100, color: '#3B82F6', title: 'EMA100' },
+        //   { period: 200, color: '#A855F7', title: 'EMA200' }
+        // ];
+        // emaConfigs.forEach(cfg => {
+        //   const emaData = calculateEMA(ohlcvData, cfg.period);
+        //   if (emaData.length > 0) {
+        //     const emaSeries = chart.addLineSeries({
+        //       color: cfg.color,
+        //       lineWidth: 2,
+        //       title: cfg.title,
+        //       priceLineVisible: false,
+        //       lastValueVisible: false,
+        //     });
+        //     emaSeries.setData(emaData);
+        //   }
+        // });
         // --- End EMA Visualization ---
       }
 

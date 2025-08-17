@@ -111,22 +111,15 @@ const ActivityFeed = ({
 
   // Initialize and set up scanning interval
   useEffect(() => {
-    let interval = null;
-
     if (isScanning) {
       // Initial scan
       scanForBreakouts();
       
       // Set up periodic scanning
-      interval = setInterval(scanForBreakouts, 30000); // Scan every 30 seconds
       setConnectionStatus('connected');
     } else {
       setConnectionStatus('disconnected');
     }
-
-    return () => {
-      if (interval) clearInterval(interval);
-    };
   }, [isScanning, scanForBreakouts]);
 
   // Filter breakouts
