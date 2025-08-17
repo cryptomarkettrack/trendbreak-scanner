@@ -8,7 +8,7 @@ const CHART_CONFIG = {
   height: 500,
   minHeight: 400,
   updateInterval: 5000, // 5 seconds
-  dataPoints: 200,
+  dataPoints: 500,
   basePrices: {
     BTC: 45000,
     ETH: 2800,
@@ -242,6 +242,25 @@ const useChart = (containerRef, selectedPair, timeframe, showFractals, showTrend
     }
   };
 
+  const calculateEMA = (data, period) => {
+    if (!data || data.length < period) return [];
+    const ema = [];
+    let multiplier = 2 / (period + 1);
+    let prevEma = data.slice(0, period).reduce((sum, d) => sum + d.close, 0) / period;
+    for (let i = 0; i < data.length; i++) {
+      if (i < period - 1) {
+        ema.push(null);
+      } else if (i === period - 1) {
+        ema.push({ time: data[i].time, value: prevEma });
+      } else {
+        prevEma = (data[i].close - prevEma) * multiplier + prevEma;
+        ema.push({ time: data[i].time, value: prevEma });
+      }
+    }
+    // Remove nulls for lightweight-charts
+    return ema.filter(e => e && e.value);
+  };
+
   const initializeChart = async (ohlcvData) => {
     if (!containerRef?.current) return;
 
@@ -258,6 +277,27 @@ const useChart = (containerRef, selectedPair, timeframe, showFractals, showTrend
         candlestickSeries?.setData(ohlcvData);
         addFractals(candlestickSeries, ohlcvData);
         addTrendlines(chart, ohlcvData);
+
+        // --- EMA Visualization ---
+        const emaConfigs = [
+          { period: 50, color: '#F59E42', title: 'EMA50' },
+          { period: 100, color: '#3B82F6', title: 'EMA100' },
+          { period: 200, color: '#A855F7', title: 'EMA200' }
+        ];
+        emaConfigs.forEach(cfg => {
+          const emaData = calculateEMA(ohlcvData, cfg.period);
+          if (emaData.length > 0) {
+            const emaSeries = chart.addLineSeries({
+              color: cfg.color,
+              lineWidth: 2,
+              title: cfg.title,
+              priceLineVisible: false,
+              lastValueVisible: false,
+            });
+            emaSeries.setData(emaData);
+          }
+        });
+        // --- End EMA Visualization ---
       }
 
       setLastUpdate(new Date());
